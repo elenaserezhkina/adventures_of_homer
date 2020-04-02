@@ -4,18 +4,44 @@ class SignUp extends React.Component {
   constructor() {
     super();
     this.state = {
-      email: "no email"
+      email: "mon@email.com",
+      password: "monPassw0rd",
+      name: "James",
+      lastname: "Bond"
     };
-    this.updateEmailField = this.updateEmailField.bind(this);
+    this.updateStateField = this.updateStateField.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
-  updateEmailField(event) {
-    this.setState({ email: event.target.value });
+  //using [key] as variable
+  updateStateField(event) {
+    let key = event.target.name;
+    this.setState({ [key]: event.target.value });
   }
+
+  handleSubmit(event) {
+    console.log(JSON.stringify(this.state, 1, 2));
+    event.preventDefault();
+  }
+
   render() {
     return (
       <>
-        <h1>{this.state.email}</h1>
-        <input type="email" name="email" onChange={this.updateEmailField} />
+        <h1>{JSON.stringify(this.state, 1, 2)}</h1>
+        <form onSubmit={this.handleSubmit}>
+          <input type="email" name="email" onChange={this.updateStateField} />
+          <br />
+          <input
+            type="password"
+            name="password"
+            onChange={this.updateStateField}
+          />
+          <br />
+          <input type="text" name="name" onChange={this.updateStateField} />
+          <br />
+          <input type="text" name="lastname" onChange={this.updateStateField} />
+          <br />
+          <input type="submit" value="Submit" />
+        </form>
       </>
     );
   }
