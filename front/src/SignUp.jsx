@@ -1,22 +1,43 @@
 import React from "react";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
+
+// PASSWORD
+import IconButton from "@material-ui/core/IconButton";
+import OutlinedInput from "@material-ui/core/OutlinedInput";
+import InputLabel from "@material-ui/core/InputLabel";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import FormControl from "@material-ui/core/FormControl";
+import Visibility from "@material-ui/icons/Visibility";
+import VisibilityOff from "@material-ui/icons/VisibilityOff";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 class SignUp extends React.Component {
   constructor() {
     super();
     this.state = {
-      email: "mon@email.com",
-      password: "monPassw0rd",
-      name: "James",
-      lastname: "Bond",
+      email: "",
+      password: "",
+      name: "",
+      lastname: "",
       flash: "",
+      flashType: "",
+      open: false,
+      showPassword: false,
     };
-    this.updateStateField = this.updateStateField.bind(this);
+
     this.handleSubmit = this.handleSubmit.bind(this);
-  }
-  //using [key] as variable
-  updateStateField(event) {
-    let key = event.target.name;
-    this.setState({ [key]: event.target.value });
+
+    this.handleClose = this.handleClose.bind(this);
+    // PASSWORD
+    this.handleClickShowPassword = this.handleClickShowPassword.bind(this);
+    this.handleMouseDownPassword = this.handleMouseDownPassword.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   handleSubmit(event) {
@@ -28,37 +49,138 @@ class SignUp extends React.Component {
       }),
       body: JSON.stringify(this.state),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        this.setState({
+          flashType: res.status === 200 ? "success" : "error",
+        });
+        return res.json();
+      })
       .then(
         (res) => this.setState({ flash: res.flash }),
         (err) => this.setState({ flash: err.flash })
-      );
+      )
+      .then(() => this.setState({ open: true }));
 
     //quest4
     console.log(JSON.stringify(this.state, 1, 2));
     event.preventDefault();
   }
 
+  handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    this.setState({ open: false });
+  };
+
+  // PASSWORD
+  handleClickShowPassword = () => {
+    this.setState({ showPassword: !this.state.showPassword });
+  };
+  handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+  handleChange = (prop) => (event) => {
+    this.setState({ [prop]: event.target.value });
+  };
+
+  // END PASSWORD
+
   render() {
     return (
-      <>
-        <h1>{JSON.stringify(this.state, 1, 2)}</h1>
+      <div className="signInForm">
+        <h1>Sign in 🥳</h1>
         <form onSubmit={this.handleSubmit}>
-          <input type="email" name="email" onChange={this.updateStateField} />
-          <br />
-          <input
-            type="password"
-            name="password"
-            onChange={this.updateStateField}
+          <TextField
+            required
+            id="outlined-textarea"
+            label="Email"
+            placeholder="example@email.com"
+            variant="outlined"
+            type="email"
+            name="email"
+            onChange={this.handleChange("email")}
+            fullWidth
           />
           <br />
-          <input type="text" name="name" onChange={this.updateStateField} />
+
+          {/* PASSWORD */}
+          <FormControl variant="outlined" fullWidth>
+            <InputLabel htmlFor="outlined-adornment-password">
+              Password
+            </InputLabel>
+            <OutlinedInput
+              required
+              id="outlined-adornment-password"
+              type={this.state.showPassword ? "text" : "password"}
+              value={this.state.password}
+              onChange={this.handleChange("password")}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={this.handleClickShowPassword}
+                    onMouseDown={this.handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {this.state.showPassword ? (
+                      <Visibility />
+                    ) : (
+                      <VisibilityOff />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              }
+              labelWidth={70}
+            />
+          </FormControl>
+          {/* END PASSWORD */}
+
           <br />
-          <input type="text" name="lastname" onChange={this.updateStateField} />
+          <TextField
+            required
+            id="outlined-textarea"
+            label="First name"
+            placeholder="Type here"
+            variant="outlined"
+            type="text"
+            name="name"
+            onChange={this.handleChange("name")}
+            fullWidth
+          />
           <br />
-          <input type="submit" value="Submit" />
+          <TextField
+            required
+            id="outlined-textarea"
+            label="Last name"
+            placeholder="Type here"
+            variant="outlined"
+            type="text"
+            name="lastname"
+            onChange={this.handleChange("lastname")}
+            fullWidth
+          />
+          <br />
+          <Button
+            type="submit"
+            value="Submit"
+            variant="contained"
+            color="secondary"
+          >
+            Submit
+          </Button>
+          <Snackbar
+            open={this.state.open}
+            autoHideDuration={6000}
+            onClose={this.handleClose}
+          >
+            <Alert onClose={this.handleClose} severity={this.state.flashType}>
+              {this.state.flash}
+            </Alert>
+          </Snackbar>
         </form>
-      </>
+      </div>
     );
   }
 }
