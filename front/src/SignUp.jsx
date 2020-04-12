@@ -7,7 +7,8 @@ class SignUp extends React.Component {
       email: "mon@email.com",
       password: "monPassw0rd",
       name: "James",
-      lastname: "Bond"
+      lastname: "Bond",
+      flash: "",
     };
     this.updateStateField = this.updateStateField.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -19,6 +20,21 @@ class SignUp extends React.Component {
   }
 
   handleSubmit(event) {
+    //quest5
+    fetch("/auth/signup", {
+      method: "POST",
+      headers: new Headers({
+        "Content-Type": "application/json",
+      }),
+      body: JSON.stringify(this.state),
+    })
+      .then((res) => res.json())
+      .then(
+        (res) => this.setState({ flash: res.flash }),
+        (err) => this.setState({ flash: err.flash })
+      );
+
+    //quest4
     console.log(JSON.stringify(this.state, 1, 2));
     event.preventDefault();
   }

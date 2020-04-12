@@ -1,0 +1,17 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Wild server",
+  "main": "app.js",
+  "scripts": {
+    "start": "node -r dotenv/config app.js"
+  },
+  "author": "wilder",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "morgan": "^1.9.0",
+    "mysql": "^2.18.1"
+  }
+}
