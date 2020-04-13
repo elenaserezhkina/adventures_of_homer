@@ -1,8 +1,12 @@
 import React from "react";
-import SignUp from "./SignUp";
+// import SignUp from "./SignUp";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
+import SignIn from "./SignIn";
+import Profile from "./Profile";
+import SignUp from "./SignUp";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 function App() {
   return (
@@ -18,7 +22,22 @@ function App() {
                 alignContent="center"
                 textAlign="center"
               >
-                <SignUp />
+                <BrowserRouter>
+                  <Switch>
+                    <Route path="/signin">
+                      <SignIn />
+                    </Route>
+                    <Route path="/signup">
+                      <SignUp />
+                    </Route>
+                    <Route path="/profile">
+                      <Profile />
+                    </Route>
+                    <Route path="/">
+                      <SignIn />
+                    </Route>
+                  </Switch>
+                </BrowserRouter>
               </Grid>
               <Grid item xs={12} sm={6} style={{ "text-align": "center" }}>
                 <img src="http://images.innoveduc.fr/react_odyssey_homer/wildhomer.png" />

@@ -3,8 +3,6 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-import { Link } from "react-router-dom";
-import { withRouter } from "react-router-dom";
 
 // PASSWORD
 import IconButton from "@material-ui/core/IconButton";
@@ -14,19 +12,20 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import FormControl from "@material-ui/core/FormControl";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import { Link } from "react-router-dom";
+
+import { withRouter } from "react-router-dom";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-class SignUp extends React.Component {
+class SignIn extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       email: "",
       password: "",
-      name: "",
-      lastname: "",
       flash: "",
       flashType: "",
       open: false,
@@ -34,7 +33,6 @@ class SignUp extends React.Component {
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
-
     this.handleClose = this.handleClose.bind(this);
     // PASSWORD
     this.handleClickShowPassword = this.handleClickShowPassword.bind(this);
@@ -44,7 +42,7 @@ class SignUp extends React.Component {
 
   handleSubmit(event) {
     //quest5
-    fetch("/auth/signup", {
+    fetch("/auth/signin", {
       method: "POST",
       headers: new Headers({
         "Content-Type": "application/json",
@@ -63,11 +61,13 @@ class SignUp extends React.Component {
       )
       .then(() => this.setState({ open: true }))
       .then(
-        () => this.state.flashType === "success" && this.props.history.push("/")
+        () =>
+          this.state.flashType === "success" &&
+          this.props.history.push("/profile")
       );
 
     //quest4
-    console.log(JSON.stringify(this.state, 1, 2));
+
     event.preventDefault();
   }
 
@@ -95,7 +95,7 @@ class SignUp extends React.Component {
   render() {
     return (
       <div className="signInForm">
-        <h1>Sign Up 🥳</h1>
+        <h1>Sign In 🥳</h1>
         <form onSubmit={this.handleSubmit}>
           <TextField
             required
@@ -141,31 +141,6 @@ class SignUp extends React.Component {
             />
           </FormControl>
           {/* END PASSWORD */}
-
-          <br />
-          <TextField
-            required
-            id="outlined-textarea"
-            label="First name"
-            placeholder="Type here"
-            variant="outlined"
-            type="text"
-            name="name"
-            onChange={this.handleChange("name")}
-            fullWidth
-          />
-          <br />
-          <TextField
-            required
-            id="outlined-textarea"
-            label="Last name"
-            placeholder="Type here"
-            variant="outlined"
-            type="text"
-            name="lastname"
-            onChange={this.handleChange("lastname")}
-            fullWidth
-          />
           <br />
           <Button
             type="submit"
@@ -177,7 +152,7 @@ class SignUp extends React.Component {
           </Button>
           <br />
           <br />
-          <Link to="/signin">Already has a profile?</Link>
+          <Link to="/signup">Don't have a profile yet?</Link>
           <Snackbar
             open={this.state.open}
             autoHideDuration={6000}
@@ -193,4 +168,4 @@ class SignUp extends React.Component {
   }
 }
 
-export default withRouter(SignUp);
+export default withRouter(SignIn);

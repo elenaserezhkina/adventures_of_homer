@@ -6,6 +6,55 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const app = express();
 const authRouter = require("./routes/auth/auth");
+const bcrypt = require("bcrypt");
+
+//quest 080
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const connection = require("./helpers/db");
+
+passport.use(
+  new JWTStrategy(
+    {
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+
+      secretOrKey: "your_jwt_secret",
+    },
+
+    function (jwtPayload, cb) {
+      return cb(null, jwtPayload);
+    }
+  )
+);
+
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: "email",
+      passwordField: "password",
+      session: false,
+    },
+    function (email, password, cb) {
+      connection.query(
+        "SELECT * FROM users WHERE email=?",
+        [email],
+        (err, results) => {
+          if (err) {
+            return cb(err);
+          }
+          if (!results.length) {
+            return cb(null, false, { message: "Incorrect username." });
+          }
+          let user = results[0];
+          if (!bcrypt.compareSync(password, user.password)) {
+            return cb(null, false, { message: "Incorrect password." });
+          }
+          return cb(null, user);
+        }
+      );
+    }
+  )
+);
 
 // set up the application
 app.use(morgan("dev"));
