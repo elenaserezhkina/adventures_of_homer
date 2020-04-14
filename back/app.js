@@ -10,6 +10,8 @@ const bcrypt = require("bcrypt");
 
 //quest 080
 const passport = require("passport");
+const JWTStrategy = require("passport-jwt").Strategy;
+const ExtractJwt = require("passport-jwt").ExtractJwt;
 const LocalStrategy = require("passport-local").Strategy;
 const connection = require("./helpers/db");
 
@@ -18,7 +20,7 @@ passport.use(
     {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 
-      secretOrKey: "your_jwt_secret",
+      secretOrKey: process.env.JWTSECRET,
     },
 
     function (jwtPayload, cb) {
@@ -65,6 +67,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static(__dirname + "/public"));
 app.use("/auth", authRouter); //where authRouter is imported
+app.get("/profile", passport.authenticate("jwt", { session: false }), function (
+  req,
+  res
+) {
+  res.send(req.user);
+});
 // implement the API part
 app.get("/", (req, res) => {
   res.send("youhou");
