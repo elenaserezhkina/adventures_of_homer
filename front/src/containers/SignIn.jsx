@@ -1,10 +1,12 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import { withRouter } from "react-router-dom";
+
+//Material Ui
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-
-// PASSWORD
 import IconButton from "@material-ui/core/IconButton";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -12,9 +14,9 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import FormControl from "@material-ui/core/FormControl";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import { Link } from "react-router-dom";
 
-import { withRouter } from "react-router-dom";
+//Redux
+import { connect } from "react-redux";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -23,6 +25,7 @@ function Alert(props) {
 class SignIn extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       email: "",
       password: "",
@@ -56,14 +59,19 @@ class SignIn extends React.Component {
         return res.json();
       })
       .then(
-        (res) => this.setState({ flash: res.flash }),
+        (data) => {
+          this.setState({ flash: data.flash, open: true });
+          if (this.state.flashType === "success") {
+            this.props.dispatch({
+              type: "CREATE_SESSION",
+              user: data.user,
+              token: data.token,
+              message: data.flash,
+            });
+            this.props.history.replace("/");
+          }
+        },
         (err) => this.setState({ flash: err.flash })
-      )
-      .then(() => this.setState({ open: true }))
-      .then(
-        () =>
-          this.state.flashType === "success" &&
-          this.props.history.push("/profile")
       );
 
     //quest4
@@ -168,4 +176,10 @@ class SignIn extends React.Component {
   }
 }
 
-export default withRouter(SignIn);
+function mapStateToProps(state) {
+  return {
+    flash: state.auth.token,
+  };
+}
+
+export default connect(mapStateToProps)(withRouter(SignIn));
