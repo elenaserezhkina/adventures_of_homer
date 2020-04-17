@@ -5,10 +5,11 @@ import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
 class Profile extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       profile: {
         email: "homer.simpson@wildcodeschool.fr",
@@ -18,21 +19,21 @@ class Profile extends React.Component {
     };
   }
 
-  // componentDidMount() {
-  //   fetch("/profile/", {
-  //     headers: {
-  //       Authorization: "Bearer " + this.props.token,
-  //     },
-  //   })
-  //     .then((res) => {
-  //       if (res.ok) return res.json();
-  //       else throw new Error(res.statusText);
-  //     })
-  //     .then((res) => {
-  //       this.setState({ profile: res });
-  //     })
-  //     .catch();
-  // }
+  componentDidMount() {
+    fetch("/profile/", {
+      headers: {
+        Authorization: "Bearer " + this.props.token,
+      },
+    })
+      .then((res) => {
+        if (res.ok) return res.json();
+        else throw new Error(res.statusText);
+      })
+      .then((res) => {
+        this.setState({ profile: res });
+      })
+      .catch();
+  }
 
   render() {
     return (
@@ -75,7 +76,16 @@ class Profile extends React.Component {
                     color="inherit"
                     style={{ fontSize: "8px", minWidth: "50px" }}
                   >
-                    <Link to="/"> Sign out</Link>
+                    <Link
+                      to="/signin"
+                      onClick={() =>
+                        this.props.dispatch({
+                          type: "DELETE_SESSION",
+                        })
+                      }
+                    >
+                      Sign out
+                    </Link>
                   </Button>
                 </React.Fragment>
               }
@@ -86,5 +96,7 @@ class Profile extends React.Component {
     );
   }
 }
-
-export default Profile;
+const mapStateToProps = (state) => ({
+  token: state.auth.token,
+});
+export default connect(mapStateToProps)(Profile);

@@ -11,7 +11,9 @@ export default function (ComposedComponent) {
       if (!this.props.authenticated) this.props.history.push("/signin");
     }
     render() {
-      return <ComposedComponent {...this.props} />;
+      return (
+        <>{this.props.authenticated && <ComposedComponent {...this.props} />}</>
+      );
     }
   }
 

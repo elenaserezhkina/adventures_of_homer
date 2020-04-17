@@ -63,7 +63,9 @@ class SignUp extends React.Component {
       )
       .then(() => this.setState({ open: true }))
       .then(
-        () => this.state.flashType === "success" && this.props.history.push("/")
+        () =>
+          this.state.flashType === "success" &&
+          this.props.history.push("/signin")
       );
 
     //quest4
